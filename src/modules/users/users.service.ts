@@ -3,10 +3,12 @@ import { FindUsersDto } from './dto/find-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { apiUrl } from 'config.json';
 import axios from 'axios';
+import { IUsersService } from './interfaces/users-service.interface';
+import { IUser, IUserDelete, IUserResponse } from './interfaces/user.interface';
 
 @Injectable()
-export class UsersService {
-  async findUsers(params: FindUsersDto) {
+export class UsersService implements IUsersService {
+  async findUsers(params: FindUsersDto): Promise<IUserResponse> {
     try {
       const { name, city, company, sort } = params;
       const users = (await axios.get(apiUrl)).data;
@@ -35,7 +37,7 @@ export class UsersService {
         filteredUsers.sort((a, b) => (a[sort] > b[sort] ? 1 : -1));
       }
 
-      const response = {
+      const response: IUserResponse = {
         totalUsers: filteredUsers.length,
         users: filteredUsers.map((user) => ({
           name: user.name,
@@ -50,7 +52,7 @@ export class UsersService {
     }
   }
 
-  async createUser(userData: CreateUserDto) {
+  async createUser(userData: CreateUserDto): Promise<IUser> {
     try {
       const response = (await axios.post(apiUrl, userData)).data;
       return response;
@@ -59,7 +61,7 @@ export class UsersService {
     }
   }
 
-  async updateUser(id: string, userData: CreateUserDto) {
+  async updateUser(id: string, userData: CreateUserDto): Promise<IUser> {
     try {
       const response = (await axios.put(`${apiUrl}/${id}`, userData)).data;
       return response;
@@ -68,7 +70,7 @@ export class UsersService {
     }
   }
 
-  async deleteUser(id: string) {
+  async deleteUser(id: string): Promise<IUserDelete> {
     try {
       const response = (await axios.delete(`${apiUrl}/${id}`)).data;
       return { response, message: 'User deleted successfully' };

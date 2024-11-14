@@ -8,16 +8,17 @@ import {
   Delete,
   Param,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FindUsersDto } from './dto/find-user.dto';
+import { IUserResponse } from './interfaces/user.interface';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async getUsers(@Query() findUsersDto: FindUsersDto) {
+  async getUsers(@Query() findUsersDto: FindUsersDto): Promise<IUserResponse> {
     try {
       return await this.usersService.findUsers(findUsersDto);
     } catch (error) {
